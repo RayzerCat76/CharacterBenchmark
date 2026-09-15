@@ -8,6 +8,8 @@ CharacterBench turns **“does this still feel like the character?”** into a r
 
 **Website:** https://characterbench-alpha.netlify.app
 
+**Latest alpha:** https://github.com/RayzerCat76/CharacterBenchmark/releases/tag/v0.2.1-alpha
+
 **Validation:** https://github.com/RayzerCat76/CharacterBenchmark/issues/1
 
 ![CharacterBench local UI](docs/ui-overview.png)
