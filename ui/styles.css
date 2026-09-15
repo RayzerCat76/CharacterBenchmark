@@ -107,3 +107,19 @@ footer{text-align:center;color:#5f7188;font-size:11px;margin-top:28px}
 .inline-error{color:#ffadb3!important}
 
 .count-badge.no-issues{background:rgba(115,214,160,.10);color:var(--green)}
+
+/* Starter-check review */
+.test-review{margin-top:14px;border:1px solid var(--line);border-radius:13px;background:#0b1523;overflow:hidden}
+.test-review>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;padding:13px 14px;font-size:13px;font-weight:750}
+.test-review>summary::-webkit-details-marker{display:none}.test-review>summary strong{color:var(--blue);font-size:12px}
+.starter-tests{border-top:1px solid var(--line)}
+.starter-test{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid rgba(34,51,74,.7)}
+.starter-test label{display:flex;align-items:flex-start;gap:11px;min-width:0;flex:1;cursor:pointer}.starter-test input{accent-color:var(--blue);margin-top:3px}
+.starter-test span,.starter-test strong,.starter-test small{display:block}.starter-test strong{font-size:12px}.starter-test small{color:var(--muted);font-size:11px;margin-top:2px;line-height:1.35}
+.remove-check{border:0;background:transparent;color:var(--muted);font-size:19px;padding:2px 5px}.remove-check:hover{color:var(--red)}
+.add-check-button{margin:10px 14px}.test-review>.hint{margin:0;padding:0 14px 13px}
+.custom-check-form{margin:0 14px 12px;padding:14px;border:1px solid #2b405a;border-radius:11px;background:#091321}
+.custom-check-form textarea,.custom-check-form input[type=text]{width:100%;border:1px solid #2d415b;border-radius:9px;background:#07111d;color:var(--text);padding:10px 11px;resize:vertical}
+.expectation-row{display:grid;grid-template-columns:150px 1fr;gap:10px;margin-top:10px}.form-actions{display:flex;gap:12px;align-items:center;margin-top:12px}
+.small-primary{border:0;border-radius:9px;background:var(--blue);color:#07111d;padding:9px 12px;font-weight:800}
+@media(max-width:700px){.expectation-row{grid-template-columns:1fr}.starter-test{padding:10px 11px}}

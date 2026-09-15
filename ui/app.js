@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const state = { suites: [], models: [], source: 'bundled', running: false, imported: null };
+const state = { suites: [], models: [], source: 'bundled', running: false, imported: null, selectedTests: new Set(), customCounter: 0 };
 
 function escapeHtml(value){
   return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;')
@@ -21,10 +21,12 @@ function setProvider(value){
 function refreshRunState(){
   const advancedReady = Boolean($('character-file').files?.[0] && $('tests-file').files?.[0]);
   const missingCharacter = state.source === 'custom' && !state.imported && !advancedReady;
+  const noSelectedTests = state.source === 'custom' && Boolean(state.imported) && state.selectedTests.size === 0;
   const missingModel = provider() === 'ollama-native' && !state.models.length;
-  $('run').disabled = state.running || missingCharacter || missingModel;
+  $('run').disabled = state.running || missingCharacter || noSelectedTests || missingModel;
   $('run').textContent = state.source === 'custom' ? 'Test my character' : (provider() === 'fixture' ? 'Run demo' : 'Test demo character');
   if(missingCharacter) $('environment').textContent = 'Drop a character card to continue.';
+  else if(noSelectedTests) $('environment').textContent = 'Select at least one starter check to continue.';
   else if(missingModel) $('environment').textContent = 'Ollama is not running or no local models were found.';
   else if(provider() === 'ollama-native') $('environment').textContent = `${state.models.length} local model${state.models.length === 1 ? '' : 's'} ready.`;
   else $('environment').textContent = 'Instant demo uses saved responses, so it runs immediately.';
@@ -81,7 +83,13 @@ function updateFileCard(input){
 
 function clearImportedCard(resetInput=true){
   state.imported = null;
+  state.selectedTests = new Set();
+  state.customCounter = 0;
   $('card-preview').classList.add('hidden');
+  $('review-tests').classList.add('hidden');
+  $('review-tests').open = false;
+  $('starter-tests').innerHTML = '';
+  $('custom-check-form').classList.add('hidden');
   $('card-drop').classList.remove('ready','dragging');
   if(resetInput) $('card-file').value = '';
   $('card-status').classList.remove('inline-error');
@@ -109,6 +117,69 @@ function signalLabels(signals){
   return labels;
 }
 
+function selectedImportedTests(){
+  if(!state.imported) return [];
+  return (state.imported.tests || []).filter(test => state.selectedTests.has(test.id));
+}
+
+function updateReviewSummary(){
+  if(!state.imported) return;
+  const total = state.imported.tests?.length || 0;
+  const selected = state.selectedTests.size;
+  $('review-count').textContent = `${selected}/${total} on`;
+  $('review-status').textContent = selected === total
+    ? 'All checks are selected. Turn off anything that does not fit this character.'
+    : `${selected} of ${total} checks will run.`;
+  $('card-meta').textContent = `${total} ${total === 1 ? 'check' : 'checks'} ready · ${state.imported.format || 'character card'}`;
+  refreshRunState();
+}
+
+function renderStarterTests(){
+  if(!state.imported) return;
+  $('starter-tests').innerHTML = (state.imported.tests || []).map(test => {
+    const checked = state.selectedTests.has(test.id) ? 'checked' : '';
+    const custom = String(test.id).startsWith('user-check-');
+    return `<div class="starter-test">
+      <label><input type="checkbox" data-test-id="${escapeHtml(test.id)}" ${checked}><span><strong>${escapeHtml(test.category)}</strong><small>${escapeHtml(test.description)}</small></span></label>
+      ${custom ? `<button type="button" class="remove-check" data-remove-test="${escapeHtml(test.id)}" aria-label="Remove custom check">×</button>` : ''}
+    </div>`;
+  }).join('');
+  $('review-tests').classList.remove('hidden');
+  updateReviewSummary();
+}
+
+function resetCustomCheckForm(){
+  $('custom-prompt').value = '';
+  $('custom-phrase').value = '';
+  $('custom-kind').value = 'mention';
+  $('custom-check-form').classList.add('hidden');
+}
+
+function addCustomCheck(){
+  if(!state.imported) return;
+  const prompt = $('custom-prompt').value.trim();
+  const phrase = $('custom-phrase').value.trim();
+  const kind = $('custom-kind').value;
+  if(!prompt || !phrase){
+    $('review-status').textContent = 'Add both a question and a word or phrase to check.';
+    return;
+  }
+  state.customCounter += 1;
+  const id = `user-check-${state.customCounter}`;
+  const expectation = kind === 'avoid' ? 'avoid' : 'mention';
+  const checks = {max_chars: 900};
+  if(expectation === 'avoid') checks.must_not_contain = [phrase];
+  else checks.must_contain_any = [phrase];
+  state.imported.tests.push({
+    id, category:'Custom',
+    description:`Should ${expectation} “${phrase}”.`,
+    turns:[prompt], checks
+  });
+  state.selectedTests.add(id);
+  resetCustomCheckForm();
+  renderStarterTests();
+}
+
 async function importCharacterCard(file){
   if(!file) return;
   clearImportedCard(false);
@@ -122,6 +193,8 @@ async function importCharacterCard(file){
     const data = await response.json();
     if(!response.ok) throw new Error(data.error || 'CharacterBench could not read that card.');
     state.imported = data;
+    state.selectedTests = new Set((data.tests || []).map(test => test.id));
+    state.customCounter = 0;
     $('card-name').textContent = data.preview?.name || 'Character ready';
     $('card-meta').textContent = `${data.preview?.test_count || 0} starter checks ready · ${data.format || 'character card'}`;
     const labels = signalLabels(data.preview?.signals);
@@ -131,6 +204,7 @@ async function importCharacterCard(file){
     $('card-status').textContent = data.preview?.warnings?.length ? data.preview.warnings.join(' ') : 'Starter tests use only information already present in the card.';
     $('character-file').value = ''; $('tests-file').value = '';
     document.querySelectorAll('.file-card').forEach(card => card.classList.remove('ready'));
+    renderStarterTests();
   }catch(err){
     $('card-file').value = '';
     $('card-status').textContent = err.message || String(err);
@@ -212,7 +286,7 @@ async function run(){
     if(state.source === 'custom'){
       if(state.imported){
         payload.custom_character = state.imported.character;
-        payload.custom_tests = state.imported.tests;
+        payload.custom_tests = selectedImportedTests();
       }else{
         payload.custom_character = await readJsonFile($('character-file'),'character profile');
         payload.custom_tests = await readJsonFile($('tests-file'),'test suite');
@@ -234,6 +308,27 @@ document.querySelectorAll('input[name="provider"]').forEach(input => input.addEv
 $('suite').addEventListener('change',updateSuiteDescription);
 $('card-file').addEventListener('change',() => importCharacterCard($('card-file').files?.[0]));
 $('clear-card').addEventListener('click',() => clearImportedCard(true));
+$('starter-tests').addEventListener('change',event => {
+  const input = event.target.closest('input[data-test-id]');
+  if(!input) return;
+  if(input.checked) state.selectedTests.add(input.dataset.testId);
+  else state.selectedTests.delete(input.dataset.testId);
+  updateReviewSummary();
+});
+$('starter-tests').addEventListener('click',event => {
+  const button = event.target.closest('[data-remove-test]');
+  if(!button || !state.imported) return;
+  const id = button.dataset.removeTest;
+  state.imported.tests = state.imported.tests.filter(test => test.id !== id);
+  state.selectedTests.delete(id);
+  renderStarterTests();
+});
+$('add-check-toggle').addEventListener('click',() => {
+  $('custom-check-form').classList.remove('hidden');
+  $('custom-prompt').focus();
+});
+$('save-custom-check').addEventListener('click',addCustomCheck);
+$('cancel-custom-check').addEventListener('click',resetCustomCheckForm);
 $('card-drop').addEventListener('dragover',event => { event.preventDefault(); $('card-drop').classList.add('dragging'); });
 $('card-drop').addEventListener('dragleave',() => $('card-drop').classList.remove('dragging'));
 $('card-drop').addEventListener('drop',event => {

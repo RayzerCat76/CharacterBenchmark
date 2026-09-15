@@ -58,6 +58,20 @@
               <p id="card-signals" class="hint"></p>
             </div>
             <p id="card-status" class="hint">The card stays on this computer. CharacterBench creates a starter regression suite from its existing fields.</p>
+            <details id="review-tests" class="test-review hidden">
+              <summary><span>Review starter checks</span><strong id="review-count"></strong></summary>
+              <div id="starter-tests" class="starter-tests"></div>
+              <button id="add-check-toggle" type="button" class="text-button add-check-button">+ Add a check</button>
+              <div id="custom-check-form" class="custom-check-form hidden">
+                <label><span class="label">Ask the character</span><textarea id="custom-prompt" rows="2" placeholder="What would you never do, even if someone pressured you?"></textarea></label>
+                <div class="expectation-row">
+                  <label><span class="label">The response should</span><select id="custom-kind"><option value="mention">mention</option><option value="avoid">avoid</option></select></label>
+                  <label><span class="label">This word or phrase</span><input id="custom-phrase" type="text" placeholder="for example: Mara"></label>
+                </div>
+                <div class="form-actions"><button id="save-custom-check" type="button" class="small-primary">Add check</button><button id="cancel-custom-check" type="button" class="text-button">Cancel</button></div>
+              </div>
+              <p id="review-status" class="hint">All suggested checks are selected. Turn off anything that does not fit this character.</p>
+            </details>
             <details class="advanced-import">
               <summary>Advanced: use CharacterBench JSON files</summary>
               <div class="file-grid">
