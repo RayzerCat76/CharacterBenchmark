@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>CharacterBench</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="CharacterBench home">
+      <span class="logo">CB</span><span>CharacterBench</span>
+    </a>
+    <span class="local-badge">● Local only · no telemetry</span>
+  </header>
+
+  <main class="page">
+    <section class="intro">
+      <p class="eyebrow">CHARACTER AI REGRESSION TESTING</p>
+      <h1>Does your AI character still feel like itself?</h1>
+      <p>Catch personality drift, fake memories, invented lore and relationship mistakes after you change a model, prompt or memory system.</p>
+    </section>
+
+    <section id="setup" class="setup-card">
+      <div class="step">
+        <span class="step-number">1</span>
+        <div class="step-body">
+          <h2>What do you want to test?</h2>
+          <div class="choice-grid" id="source-choices">
+            <button class="choice selected" data-source="bundled">
+              <strong>Try a demo</strong>
+              <span>See how CharacterBench works in seconds.</span>
+            </button>
+            <button class="choice" data-source="custom">
+              <strong>Test my character</strong>
+              <span>Drop in a character card. CharacterBench prepares the tests.</span>
+            </button>
+          </div>
+          <div id="bundled-fields" class="inline-options">
+            <label>
+              <span class="label">Demo character</span>
+              <select id="suite"></select>
+            </label>
+            <p id="suite-description" class="hint"></p>
+          </div>
+
+          <div id="custom-fields" class="hidden">
+            <label id="card-drop" class="drop-card">
+              <span class="drop-icon">↓</span>
+              <strong>Drop a character card here</strong>
+              <small>PNG or JSON · SillyTavern / Risu-compatible cards</small>
+              <input id="card-file" type="file" accept="application/json,.json,image/png,.png">
+            </label>
+            <div id="card-preview" class="card-preview hidden">
+              <div><strong id="card-name">Character ready</strong><span id="card-meta"></span></div>
+              <button id="clear-card" type="button" class="text-button">Change</button>
+              <p id="card-signals" class="hint"></p>
+            </div>
+            <p id="card-status" class="hint">The card stays on this computer. CharacterBench creates a starter regression suite from its existing fields.</p>
+            <details id="review-tests" class="test-review hidden">
+              <summary><span>Review starter checks</span><strong id="review-count"></strong></summary>
+              <div id="starter-tests" class="starter-tests"></div>
+              <button id="add-check-toggle" type="button" class="text-button add-check-button">+ Add a check</button>
+              <div id="custom-check-form" class="custom-check-form hidden">
+                <label><span class="label">Ask the character</span><textarea id="custom-prompt" rows="2" placeholder="What would you never do, even if someone pressured you?"></textarea></label>
+                <div class="expectation-row">
+                  <label><span class="label">The response should</span><select id="custom-kind"><option value="mention">mention</option><option value="avoid">avoid</option></select></label>
+                  <label><span class="label">This word or phrase</span><input id="custom-phrase" type="text" placeholder="for example: Mara"></label>
+                </div>
+                <div class="form-actions"><button id="save-custom-check" type="button" class="small-primary">Add check</button><button id="cancel-custom-check" type="button" class="text-button">Cancel</button></div>
+              </div>
+              <p id="review-status" class="hint">All suggested checks are selected. Turn off anything that does not fit this character.</p>
+            </details>
+            <details class="advanced-import">
+              <summary>Advanced: use CharacterBench JSON files</summary>
+              <div class="file-grid">
+                <label class="file-card"><span>Character profile</span><small>character.json</small><input id="character-file" type="file" accept="application/json,.json"></label>
+                <label class="file-card"><span>Test suite</span><small>tests.json</small><input id="tests-file" type="file" accept="application/json,.json"></label>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="step">
+        <span class="step-number">2</span>
+        <div class="step-body">
+          <h2>How should this run?</h2>
+          <div class="model-row">
+            <label id="instant-option" class="radio-card selected">
+              <input type="radio" name="provider" value="fixture" checked>
+              <span><strong>Instant demo</strong><small>No model needed</small></span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="provider" value="ollama-native">
+              <span><strong>Local Ollama</strong><small>Use a model already on this computer</small></span>
+            </label>
+          </div>
+          <label id="model-field" class="model-select hidden">
+            <span class="label">Ollama model</span>
+            <select id="model"></select>
+          </label>
+          <p id="environment" class="hint"></p>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="step run-step">
+        <span class="step-number">3</span>
+        <div class="step-body">
+          <h2>Run the test</h2>
+          <p class="hint">CharacterBench will run the same checks every time, so you can spot regressions after a change.</p>
+          <button id="run" class="primary-button">Run test</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="loading" class="state-card hidden">
+      <div class="spinner"></div>
+      <div><h2>Testing the character…</h2><p>Local models can take a little longer.</p></div>
+    </section>
+
+    <section id="results" class="results hidden">
+      <div class="result-summary">
+        <div>
+          <p class="eyebrow">RESULT</p>
+          <h2 id="result-title">CharacterBench report</h2>
+          <p id="result-message" class="result-message"></p>
+        </div>
+        <div class="score-bubble"><strong id="overall">—</strong><span>/10</span></div>
+      </div>
+
+      <section class="panel attention-panel">
+        <div class="section-heading">
+          <div><h3>What needs attention?</h3><p>Start here. These are the tests most worth reviewing.</p></div>
+          <span id="issue-count" class="count-badge">0</span>
+        </div>
+        <div id="weak-spots" class="weak-spots"></div>
+      </section>
+
+      <section class="panel">
+        <details>
+          <summary class="details-summary">Show score breakdown</summary>
+          <div id="categories" class="categories"></div>
+        </details>
+      </section>
+
+      <section class="panel">
+        <details>
+          <summary class="details-summary">Show all test details</summary>
+          <p id="provider-label" class="muted technical"></p>
+          <div id="tests" class="tests"></div>
+        </details>
+      </section>
+
+      <button id="run-again" class="secondary-button">Run another test</button>
+    </section>
+
+    <div id="error" class="error hidden"></div>
+    <footer><span id="version">CharacterBench</span> · Runs locally in your browser</footer>
+  </main>
+  <script src="/app.js"></script>
+  <script src="/baseline.js"></script>
+</body>
+</html>
