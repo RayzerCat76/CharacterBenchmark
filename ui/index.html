@@ -8,110 +8,136 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <div class="shell">
-    <aside class="sidebar">
-      <div class="brand-row">
-        <div class="logo">CB</div>
-        <div><strong>CharacterBench</strong><span id="version">loading…</span></div>
-      </div>
-      <p class="tagline">Regression testing for character AI.</p>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="CharacterBench home">
+      <span class="logo">CB</span><span>CharacterBench</span>
+    </a>
+    <span class="local-badge">● Local only · no telemetry</span>
+  </header>
 
-      <label class="field">
-        <span>Test source</span>
-        <select id="source">
-          <option value="bundled">Bundled CharacterBench suite</option>
-          <option value="custom">My CharacterBench JSON</option>
-        </select>
-      </label>
+  <main class="page">
+    <section class="intro">
+      <p class="eyebrow">CHARACTER AI REGRESSION TESTING</p>
+      <h1>Does your AI character still feel like itself?</h1>
+      <p>Catch personality drift, fake memories, invented lore and relationship mistakes after you change a model, prompt or memory system.</p>
+    </section>
 
-      <div id="bundled-fields">
-        <label class="field">
-          <span>Test persona</span>
-          <select id="suite"></select>
-        </label>
-        <div id="suite-description" class="helper"></div>
-      </div>
-
-      <div id="custom-fields" class="hidden">
-        <label class="field"><span>Character JSON</span><input id="character-file" type="file" accept="application/json,.json"></label>
-        <label class="field"><span>Tests JSON</span><input id="tests-file" type="file" accept="application/json,.json"></label>
-        <div class="helper">Files stay in this local browser session; CharacterBench does not upload them.</div>
-      </div>
-
-      <label class="field">
-        <span>Run mode</span>
-        <select id="provider">
-          <option value="fixture">Offline demo — instant</option>
-          <option value="ollama-native">Local Ollama model</option>
-        </select>
-      </label>
-      <label class="field" id="model-field">
-        <span>Ollama model</span>
-        <select id="model"></select>
-      </label>
-
-      <button id="run" class="run-button">Run CharacterBench</button>
-      <div id="environment" class="status-line">Checking local environment…</div>
-
-      <div class="privacy-box">
-        <strong>Local-first</strong>
-        <span>This UI binds to localhost and adds no telemetry.</span>
-      </div>
-    </aside>
-
-    <main class="main">
-      <section class="hero">
-        <p class="eyebrow">CHARACTER CONSISTENCY</p>
-        <h1>Did your last model change quietly break the character?</h1>
-        <p>Run repeatable tests for personality, false memories, lore boundaries, relationships, language and long-chat drift.</p>
-      </section>
-
-      <section id="empty-state" class="empty-state">
-        <div class="flow">
-          <span>Character profile</span><b>+</b><span>Test cases</span><b>→</b><span>Your model</span><b>→</b><span>Failure report</span>
-        </div>
-        <h2>Run the offline demo first.</h2>
-        <p>It takes seconds and shows the exact kind of regression CharacterBench is designed to catch.</p>
-      </section>
-
-      <section id="loading" class="loading hidden">
-        <div class="spinner"></div>
-        <h2>Running the suite…</h2>
-        <p>Local models can take a while. One test failure will not hide the rest of the report.</p>
-      </section>
-      <section id="results" class="hidden">
-        <div class="results-head">
-          <div>
-            <p class="eyebrow">RESULT</p>
-            <h2 id="result-title">CharacterBench report</h2>
-            <p id="provider-label" class="muted"></p>
+    <section id="setup" class="setup-card">
+      <div class="step">
+        <span class="step-number">1</span>
+        <div class="step-body">
+          <h2>What do you want to test?</h2>
+          <div class="choice-grid" id="source-choices">
+            <button class="choice selected" data-source="bundled">
+              <strong>Try a demo</strong>
+              <span>See how CharacterBench works in seconds.</span>
+            </button>
+            <button class="choice" data-source="custom">
+              <strong>Test my character</strong>
+              <span>Use your own CharacterBench JSON files.</span>
+            </button>
           </div>
-          <div class="overall-card">
-            <span>Overall</span>
-            <strong id="overall">—</strong>
-            <small>/ 10</small>
+          <div id="bundled-fields" class="inline-options">
+            <label>
+              <span class="label">Demo character</span>
+              <select id="suite"></select>
+            </label>
+            <p id="suite-description" class="hint"></p>
+          </div>
+
+          <div id="custom-fields" class="file-grid hidden">
+            <label class="file-card">
+              <span>Character profile</span>
+              <small>character.json</small>
+              <input id="character-file" type="file" accept="application/json,.json">
+            </label>
+            <label class="file-card">
+              <span>Test suite</span>
+              <small>tests.json</small>
+              <input id="tests-file" type="file" accept="application/json,.json">
+            </label>
+            <p class="hint full">Your files stay on this computer and are only sent to the local CharacterBench process.</p>
           </div>
         </div>
+      </div>
 
-        <div class="panel">
-          <div class="panel-title"><h3>Category scores</h3><span>Lower scores show where to investigate.</span></div>
+      <div class="divider"></div>
+      <div class="step">
+        <span class="step-number">2</span>
+        <div class="step-body">
+          <h2>How should this run?</h2>
+          <div class="model-row">
+            <label id="instant-option" class="radio-card selected">
+              <input type="radio" name="provider" value="fixture" checked>
+              <span><strong>Instant demo</strong><small>No model needed</small></span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="provider" value="ollama-native">
+              <span><strong>Local Ollama</strong><small>Use a model already on this computer</small></span>
+            </label>
+          </div>
+          <label id="model-field" class="model-select hidden">
+            <span class="label">Ollama model</span>
+            <select id="model"></select>
+          </label>
+          <p id="environment" class="hint"></p>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="step run-step">
+        <span class="step-number">3</span>
+        <div class="step-body">
+          <h2>Run the test</h2>
+          <p class="hint">CharacterBench will run the same checks every time, so you can spot regressions after a change.</p>
+          <button id="run" class="primary-button">Run test</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="loading" class="state-card hidden">
+      <div class="spinner"></div>
+      <div><h2>Testing the character…</h2><p>Local models can take a little longer.</p></div>
+    </section>
+
+    <section id="results" class="results hidden">
+      <div class="result-summary">
+        <div>
+          <p class="eyebrow">RESULT</p>
+          <h2 id="result-title">CharacterBench report</h2>
+          <p id="result-message" class="result-message"></p>
+        </div>
+        <div class="score-bubble"><strong id="overall">—</strong><span>/10</span></div>
+      </div>
+
+      <section class="panel attention-panel">
+        <div class="section-heading">
+          <div><h3>What needs attention?</h3><p>Start here. These are the tests most worth reviewing.</p></div>
+          <span id="issue-count" class="count-badge">0</span>
+        </div>
+        <div id="weak-spots" class="weak-spots"></div>
+      </section>
+
+      <section class="panel">
+        <details>
+          <summary class="details-summary">Show score breakdown</summary>
           <div id="categories" class="categories"></div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title"><h3>Weak spots</h3><span>Tests below 8/10.</span></div>
-          <div id="weak-spots" class="weak-spots"></div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-title"><h3>All tests</h3><span>Expand a test to inspect why it scored that way.</span></div>
-          <div id="tests" class="tests"></div>
-        </div>
+        </details>
       </section>
 
-      <div id="error" class="error hidden"></div>
-    </main>
-  </div>
+      <section class="panel">
+        <details>
+          <summary class="details-summary">Show all test details</summary>
+          <p id="provider-label" class="muted technical"></p>
+          <div id="tests" class="tests"></div>
+        </details>
+      </section>
+
+      <button id="run-again" class="secondary-button">Run another test</button>
+    </section>
+
+    <div id="error" class="error hidden"></div>
+    <footer><span id="version">CharacterBench</span> · Runs locally in your browser</footer>
+  </main>
   <script src="/app.js"></script>
 </body>
 </html>
