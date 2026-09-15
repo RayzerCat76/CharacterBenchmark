@@ -8,6 +8,8 @@ CharacterBench turns **“does this still feel like the character?”** into a r
 
 **Website:** https://characterbench-alpha.netlify.app
 
+![CharacterBench local UI](docs/ui-overview.png)
+
 ### Why use it?
 
 - Re-run the same character tests after every model or prompt change.
@@ -20,46 +22,27 @@ CharacterBench turns **“does this still feel like the character?”** into a r
 
 ## Quick start
 
-For a first external test, follow [`TESTER_GUIDE.md`](TESTER_GUIDE.md). Structured feedback can use [`FEEDBACK_TEMPLATE.md`](FEEDBACK_TEMPLATE.md).
-
-CharacterBench now has one entry point:
-
-```bash
-python3 characterbench.py demo
-```
-
-That runs the included offline fixture demo, costs nothing, and writes:
-
-```text
-reports/latest.md
-reports/latest.json
-```
-
-Create a starter project with:
-
-```bash
-python3 characterbench.py init my-character-test
-```
-
-The same command exposes `eval`, `compare`, `suite`, `rescore`, `html`, `validate`, `doctor`, `feedback`, `ui`, and `self-test`. Existing direct scripts remain available for automation.
-
-For a machine-readable result:
-
-```bash
-python3 characterbench.py eval --summary-json reports/latest.json
-```
-
-## Browser UI preview
-
-Start the local browser UI with:
+CharacterBench 0.2.0-alpha is designed to be usable without writing test JSON first.
 
 ```bash
 python3 characterbench.py ui
 ```
 
-The UI binds to `127.0.0.1` only and adds no telemetry. The fastest path is **Test my character → drop a standard Character Card JSON/PNG → review the suggested checks → choose an installed Ollama model → run**. CharacterBench extracts only fields already present in the card and generates a conservative starter regression suite. You can turn suggested checks on/off or add a simple custom check without editing JSON. Standard Character Card v1/v2/v3-style JSON and PNG cards with embedded `chara`/`ccv3` metadata are supported; encrypted Risu-specific cards are not yet supported.
+Then open the local page and choose **Test my character**. Drop a standard Character Card JSON/PNG, review the starter checks, choose an installed Ollama model, and run. Save the result as a local baseline and rerun after a model, prompt, memory, or card change to see regressions and improvements.
 
-Advanced users can still load CharacterBench `character.json` + `tests.json` directly. After a run, the UI can save a privacy-minimal local baseline and compare a later run to highlight meaningful regressions and improvements; prompts, responses, transcripts, lore, and card contents are not stored in that baseline. This is an onboarding preview, not a hosted CharacterBench service: there is no account, cloud storage, or remote upload path.
+The UI binds to `127.0.0.1` only and adds no telemetry. Card contents, prompts, and model responses stay local. Saved baselines keep score metadata and test fingerprints only.
+
+Standard Character Card v1/v2/v3-style JSON and PNG cards with embedded `chara`/`ccv3` metadata are supported. Encrypted Risu-specific cards are not supported. Advanced users can still load CharacterBench `character.json` + `tests.json` directly.
+
+For a zero-model smoke test:
+
+```bash
+python3 characterbench.py doctor
+python3 characterbench.py demo
+python3 characterbench.py self-test
+```
+
+The demo writes `reports/latest.md` and `reports/latest.json`. The same entry point also exposes `init`, `eval`, `compare`, `suite`, `rescore`, `html`, `validate`, `doctor`, `feedback`, `ui`, and `self-test`.
 
 ## Compare multiple model profiles
 
@@ -213,13 +196,16 @@ The default packet keeps only scores, safe built-in category names, anonymised m
 - self-service environment diagnostics
 - structured alpha tester + feedback workflow
 - privacy-safe feedback packet generator
+- character-card JSON/PNG import with conservative starter checks
+- simple review/toggle/custom-check UI
+- local baseline save + regression/improvement comparison
 - no third-party Python packages
 
 ## What this MVP is proving
 
 The goal is not to claim the scoring is already scientifically valid. The goal is to test the product loop:
 
-**character definition → scripted conversations → measurable checks → readable failure report → model comparison**
+**character card/definition → repeatable checks → readable failure report → saved baseline → regression comparison**
 
 The next milestone is to validate the two-character suite on real models, inspect false positives/negatives, and add semantic judge scoring only where deterministic checks are insufficient.
 
@@ -251,3 +237,7 @@ characterbench/
 ## Privacy/IP
 
 The bundled character and setting are original examples created for CharacterBench. No third-party game characters, scripts, or copyrighted lore are included.
+
+## License
+
+CharacterBench is licensed under the [Apache License 2.0](LICENSE).

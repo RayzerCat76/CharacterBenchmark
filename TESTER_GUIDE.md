@@ -1,4 +1,4 @@
-# CharacterBench alpha tester guide
+# CharacterBench 0.2 alpha tester guide
 
 Target time: about 10 minutes.
 
@@ -15,53 +15,37 @@ If you use Ollama, verify your model explicitly:
 python3 characterbench.py doctor --model your-model-name
 ```
 
-## 2. Run the bundled demo
+## 2. Open the local UI
+
+```bash
+python3 characterbench.py ui
+```
+
+The page binds to `127.0.0.1` and CharacterBench adds no telemetry.
+## 3. Test your own character
+
+Choose **Test my character** and drop a standard Character Card JSON or PNG. Review the starter checks, turn off anything that does not fit, and add one custom check if something important is missing.
+
+Choose an installed Ollama model and run the suite. The most useful outcome is not a high score; it is one failure you recognize as a real character regression.
+
+## 4. Save a baseline and rerun
+
+Save the first result as a local baseline. Change one thing -- model, prompt, memory system, or character card -- and run the same checks again.
+
+CharacterBench highlights meaningful regressions and improvements. If the test set or a test definition changed, it avoids presenting the overall scores as directly comparable.
+
+## 5. Optional zero-model demo
 
 ```bash
 python3 characterbench.py demo
 ```
 
-This uses offline fixtures, should not contact a model provider, and writes both `reports/latest.md` and `reports/latest.json`.
+This uses offline fixtures and writes `reports/latest.md` and `reports/latest.json`.
+## 6. Send useful feedback
 
-## 3. Create a starter character test
+The best feedback is one concrete example where CharacterBench either missed an obvious character failure or flagged a response that was actually in-character.
 
-```bash
-python3 characterbench.py init my-test
-```
-
-Edit:
-
-- `my-test/character.json`
-- `my-test/tests.json`
-- `my-test/models.json`
-
-Then validate them:
-
-```bash
-python3 characterbench.py validate \
-  --character my-test/character.json \
-  --tests my-test/tests.json \
-  --models my-test/models.json
-```
-
-## 4. Run one real model
-
-For Ollama, either use `run_eval.py` directly or set the model/provider in your config. Keep the first run small; the goal is to see whether the report catches a real character failure.
-
-## 5. Export an HTML report
-
-If you saved JSON results:
-
-```bash
-python3 characterbench.py html \
-  --input path/to/results.json \
-  --output report.html \
-  --title "My CharacterBench test"
-```
-
-Open `report.html` in a browser.
-
-## 6. Generate a privacy-safe feedback packet
+For a saved JSON result, you can generate a privacy-safe feedback packet:
 
 ```bash
 python3 characterbench.py feedback \
@@ -69,11 +53,4 @@ python3 characterbench.py feedback \
   --output reports/feedback.md
 ```
 
-For your own real-model result, replace `reports/latest.json` with the JSON file you generated. The packet intentionally excludes prompts, model responses, transcripts, names, model labels, endpoint URLs and local paths. Review any notes you add manually before sharing them.
-
-The most valuable product feedback is one concrete example where CharacterBench either:
-
-1. missed an obvious character failure, or
-2. flagged a response that was actually in-character.
-
-Those false negatives/positives are more useful than a general opinion like “the score seems good.”
+The default packet excludes prompts, responses, transcripts, character names, model labels, endpoint URLs, and local paths. Review any notes you add manually before sharing them.
