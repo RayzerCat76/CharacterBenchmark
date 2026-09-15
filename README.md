@@ -59,7 +59,7 @@ python3 characterbench.py ui
 
 The UI binds to `127.0.0.1` only and adds no telemetry. The fastest path is **Test my character → drop a standard Character Card JSON/PNG → review the suggested checks → choose an installed Ollama model → run**. CharacterBench extracts only fields already present in the card and generates a conservative starter regression suite. You can turn suggested checks on/off or add a simple custom check without editing JSON. Standard Character Card v1/v2/v3-style JSON and PNG cards with embedded `chara`/`ccv3` metadata are supported; encrypted Risu-specific cards are not yet supported.
 
-Advanced users can still load CharacterBench `character.json` + `tests.json` directly. This is an onboarding preview, not a hosted CharacterBench service: there is no account, cloud storage, or remote upload path.
+Advanced users can still load CharacterBench `character.json` + `tests.json` directly. After a run, the UI can save a privacy-minimal local baseline and compare a later run to highlight meaningful regressions and improvements; prompts, responses, transcripts, lore, and card contents are not stored in that baseline. This is an onboarding preview, not a hosted CharacterBench service: there is no account, cloud storage, or remote upload path.
 
 ## Compare multiple model profiles
 
