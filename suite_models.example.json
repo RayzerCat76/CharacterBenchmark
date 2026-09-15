@@ -1,0 +1,18 @@
+[
+  {
+    "label": "Synthetic strong multi-character",
+    "provider": "fixture",
+    "fixtures": {
+      "aster": "fixtures/synthetic_good.json",
+      "tavi": "fixtures/tavi_good.json"
+    }
+  },
+  {
+    "label": "Synthetic generic multi-character",
+    "provider": "fixture",
+    "fixtures": {
+      "aster": "fixtures/synthetic_generic.json",
+      "tavi": "fixtures/tavi_generic.json"
+    }
+  }
+]

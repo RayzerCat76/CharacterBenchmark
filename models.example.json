@@ -1,0 +1,17 @@
+[
+  {
+    "label": "Synthetic strong",
+    "provider": "fixture",
+    "fixture": "fixtures/synthetic_good.json"
+  },
+  {
+    "label": "Synthetic generic assistant",
+    "provider": "fixture",
+    "fixture": "fixtures/synthetic_generic.json"
+  },
+  {
+    "label": "Synthetic long-context drift",
+    "provider": "fixture",
+    "fixture": "fixtures/synthetic_drift.json"
+  }
+]

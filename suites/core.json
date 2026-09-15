@@ -1,0 +1,12 @@
+[
+  {
+    "id": "aster",
+    "character": "../characters/demo.json",
+    "tests": "../tests/tests.json"
+  },
+  {
+    "id": "tavi",
+    "character": "../characters/tavi.json",
+    "tests": "../tests/tavi_tests.json"
+  }
+]

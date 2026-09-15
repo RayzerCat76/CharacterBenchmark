@@ -1,0 +1,6 @@
+
+# Public repository housekeeping
+.reports/
+reports/
+__pycache__/
+*.pyc
