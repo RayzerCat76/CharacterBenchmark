@@ -23,12 +23,14 @@ function refreshRunState(){
   const missingCharacter = state.source === 'custom' && !state.imported && !advancedReady;
   const noSelectedTests = state.source === 'custom' && Boolean(state.imported) && state.selectedTests.size === 0;
   const missingModel = provider() === 'ollama-native' && !state.models.length;
-  $('run').disabled = state.running || missingCharacter || noSelectedTests || missingModel;
+  const unchosenModel = provider() === 'ollama-native' && state.models.length > 0 && !$('model').value;
+  $('run').disabled = state.running || missingCharacter || noSelectedTests || missingModel || unchosenModel;
   $('run').textContent = state.source === 'custom' ? 'Test my character' : (provider() === 'fixture' ? 'Run demo' : 'Test demo character');
   if(missingCharacter) $('environment').textContent = 'Drop a character card to continue.';
   else if(noSelectedTests) $('environment').textContent = 'Select at least one starter check to continue.';
   else if(missingModel) $('environment').textContent = 'Ollama is not running or no local models were found.';
-  else if(provider() === 'ollama-native') $('environment').textContent = `${state.models.length} local model${state.models.length === 1 ? '' : 's'} ready.`;
+  else if(unchosenModel) $('environment').textContent = 'Choose a local model. A smaller text model is a good first test.';
+  else if(provider() === 'ollama-native') $('environment').textContent = `Ready to run with ${$('model').value}.`;
   else $('environment').textContent = 'Instant demo uses saved responses, so it runs immediately.';
 }
 function updateProviderCards(){
@@ -41,7 +43,7 @@ function updateProviderCards(){
   if(ollama && !state.models.length){
     $('environment').textContent = 'Ollama is not running or no local models were found.';
   }else if(ollama){
-    $('environment').textContent = `${state.models.length} local model${state.models.length === 1 ? '' : 's'} ready.`;
+    $('environment').textContent = $('model').value ? `Ready to run with ${$('model').value}.` : 'Choose a local model. A smaller text model is a good first test.';
   }else{
     $('environment').textContent = 'Instant demo uses saved responses, so it runs immediately.';
   }
@@ -224,7 +226,7 @@ async function loadState(){
   $('version').textContent = `CharacterBench ${data.version}`;
   $('suite').innerHTML = state.suites.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)}</option>`).join('');
   $('model').innerHTML = state.models.length
-    ? state.models.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('')
+    ? '<option value="">Choose a local model</option>' + state.models.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('')
     : '<option value="">No local models found</option>';
   updateSuiteDescription();
   chooseSource('bundled');
@@ -282,6 +284,7 @@ async function run(){
   setLoading(true);
   try{
     if(provider() === 'ollama-native' && !state.models.length) throw new Error('Start Ollama and make sure at least one model is installed.');
+    if(provider() === 'ollama-native' && !$('model').value) throw new Error('Choose a local model before running the test.');
     const payload = {suite:$('suite').value,provider:provider(),model:$('model').value};
     if(state.source === 'custom'){
       if(state.imported){
@@ -306,6 +309,7 @@ async function run(){
 document.querySelectorAll('[data-source]').forEach(button => button.addEventListener('click',() => chooseSource(button.dataset.source)));
 document.querySelectorAll('input[name="provider"]').forEach(input => input.addEventListener('change',updateProviderCards));
 $('suite').addEventListener('change',updateSuiteDescription);
+$('model').addEventListener('change',refreshRunState);
 $('card-file').addEventListener('change',() => importCharacterCard($('card-file').files?.[0]));
 $('clear-card').addEventListener('click',() => clearImportedCard(true));
 $('starter-tests').addEventListener('change',event => {

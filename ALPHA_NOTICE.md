@@ -1,6 +1,6 @@
 # CharacterBench Alpha
 
-CharacterBench 0.2.0-alpha is an experimental public evaluation build intended for testing and feedback.
+CharacterBench 0.2.1-alpha is an experimental public evaluation build intended for testing and feedback.
 
 - Scores are diagnostic signals, not scientific measurements or general model-quality rankings.
 - The bundled fictional characters, settings, and benchmark prompts are original test material.

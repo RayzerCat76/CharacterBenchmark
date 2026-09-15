@@ -24,7 +24,7 @@ CharacterBench turns **“does this still feel like the character?”** into a r
 
 ## Quick start
 
-CharacterBench 0.2.0-alpha is designed to be usable without writing test JSON first.
+CharacterBench 0.2.1-alpha is designed to be usable without writing test JSON first.
 
 ```bash
 python3 characterbench.py ui
