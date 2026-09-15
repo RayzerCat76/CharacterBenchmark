@@ -5,6 +5,7 @@ import json
 
 from feedback_packet import build_packet, error_class, render_markdown
 from run_eval import ROOT, build_summary, evaluate, load_json, score_criteria, term_present
+from ui_server import run_payload
 
 ASTER_EXPECTED = {
     "synthetic_good.json": 10.0,
@@ -96,6 +97,22 @@ def main() -> int:
     if "None/10" in error_markdown or "ERROR" not in error_markdown or "timeout" not in error_markdown:
         raise AssertionError("Feedback Markdown must render runtime failures safely")
     print("PASS feedback runtime-error rendering")
+
+    ui_demo = run_payload({"suite": "aster", "provider": "fixture"})
+    if ui_demo.get("overall") != 4.3 or ui_demo.get("suite_id") != "aster":
+        raise AssertionError("Local UI fixture path must reproduce the Aster generic regression fixture")
+    try:
+        run_payload({
+            "suite": "aster",
+            "provider": "fixture",
+            "custom_character": {"name": "X"},
+            "custom_tests": [],
+        })
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("Custom UI input must not run through fixture mode")
+    print("PASS local UI regression path")
 
     print("All CharacterBench self-tests passed.")
     return 0

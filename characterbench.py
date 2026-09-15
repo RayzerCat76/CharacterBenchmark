@@ -18,6 +18,7 @@ SCRIPTS = {
     "validate": "validate_config.py",
     "doctor": "doctor.py",
     "feedback": "feedback_packet.py",
+    "ui": "ui_server.py",
 }
 
 STARTER_CHARACTER = {

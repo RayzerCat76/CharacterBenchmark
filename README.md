@@ -41,13 +41,25 @@ Create a starter project with:
 python3 characterbench.py init my-character-test
 ```
 
-The same command exposes `eval`, `compare`, `suite`, `rescore`, `html`, `validate`, `doctor`, `feedback`, and `self-test`. Existing direct scripts remain available for automation.
+The same command exposes `eval`, `compare`, `suite`, `rescore`, `html`, `validate`, `doctor`, `feedback`, `ui`, and `self-test`. Existing direct scripts remain available for automation.
 
 For a machine-readable result:
 
 ```bash
 python3 characterbench.py eval --summary-json reports/latest.json
 ```
+
+## Browser UI preview
+
+Start the local browser UI with:
+
+```bash
+python3 characterbench.py ui
+```
+
+The UI binds to `127.0.0.1` only and adds no telemetry. It can run the bundled Aster/Tavi suites in offline-demo mode or against an installed Ollama model, and it can load your own CharacterBench `character.json` + `tests.json` files directly in the browser for a local Ollama run.
+
+This is an onboarding preview, not a hosted CharacterBench service: there is no account, cloud storage, or remote upload path.
 
 ## Compare multiple model profiles
 

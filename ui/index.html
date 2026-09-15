@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>CharacterBench</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand-row">
+        <div class="logo">CB</div>
+        <div><strong>CharacterBench</strong><span id="version">loading…</span></div>
+      </div>
+      <p class="tagline">Regression testing for character AI.</p>
+
+      <label class="field">
+        <span>Test source</span>
+        <select id="source">
+          <option value="bundled">Bundled CharacterBench suite</option>
+          <option value="custom">My CharacterBench JSON</option>
+        </select>
+      </label>
+
+      <div id="bundled-fields">
+        <label class="field">
+          <span>Test persona</span>
+          <select id="suite"></select>
+        </label>
+        <div id="suite-description" class="helper"></div>
+      </div>
+
+      <div id="custom-fields" class="hidden">
+        <label class="field"><span>Character JSON</span><input id="character-file" type="file" accept="application/json,.json"></label>
+        <label class="field"><span>Tests JSON</span><input id="tests-file" type="file" accept="application/json,.json"></label>
+        <div class="helper">Files stay in this local browser session; CharacterBench does not upload them.</div>
+      </div>
+
+      <label class="field">
+        <span>Run mode</span>
+        <select id="provider">
+          <option value="fixture">Offline demo — instant</option>
+          <option value="ollama-native">Local Ollama model</option>
+        </select>
+      </label>
+      <label class="field" id="model-field">
+        <span>Ollama model</span>
+        <select id="model"></select>
+      </label>
+
+      <button id="run" class="run-button">Run CharacterBench</button>
+      <div id="environment" class="status-line">Checking local environment…</div>
+
+      <div class="privacy-box">
+        <strong>Local-first</strong>
+        <span>This UI binds to localhost and adds no telemetry.</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <p class="eyebrow">CHARACTER CONSISTENCY</p>
+        <h1>Did your last model change quietly break the character?</h1>
+        <p>Run repeatable tests for personality, false memories, lore boundaries, relationships, language and long-chat drift.</p>
+      </section>
+
+      <section id="empty-state" class="empty-state">
+        <div class="flow">
+          <span>Character profile</span><b>+</b><span>Test cases</span><b>→</b><span>Your model</span><b>→</b><span>Failure report</span>
+        </div>
+        <h2>Run the offline demo first.</h2>
+        <p>It takes seconds and shows the exact kind of regression CharacterBench is designed to catch.</p>
+      </section>
+
+      <section id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <h2>Running the suite…</h2>
+        <p>Local models can take a while. One test failure will not hide the rest of the report.</p>
+      </section>
+      <section id="results" class="hidden">
+        <div class="results-head">
+          <div>
+            <p class="eyebrow">RESULT</p>
+            <h2 id="result-title">CharacterBench report</h2>
+            <p id="provider-label" class="muted"></p>
+          </div>
+          <div class="overall-card">
+            <span>Overall</span>
+            <strong id="overall">—</strong>
+            <small>/ 10</small>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title"><h3>Category scores</h3><span>Lower scores show where to investigate.</span></div>
+          <div id="categories" class="categories"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title"><h3>Weak spots</h3><span>Tests below 8/10.</span></div>
+          <div id="weak-spots" class="weak-spots"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title"><h3>All tests</h3><span>Expand a test to inspect why it scored that way.</span></div>
+          <div id="tests" class="tests"></div>
+        </div>
+      </section>
+
+      <div id="error" class="error hidden"></div>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

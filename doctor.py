@@ -45,7 +45,7 @@ def main() -> int:
         status('FAIL', f'Python {version.major}.{version.minor}.{version.micro}; Python 3.10+ recommended')
         failed = True
 
-    required = ['run_eval.py', 'compare_models.py', 'run_suite.py', 'render_html.py', 'validate_config.py']
+    required = ['run_eval.py', 'compare_models.py', 'run_suite.py', 'render_html.py', 'validate_config.py', 'ui_server.py']
     missing = [name for name in required if not (ROOT / name).is_file()]
     if missing:
         status('FAIL', f'missing CharacterBench files: {", ".join(missing)}')
