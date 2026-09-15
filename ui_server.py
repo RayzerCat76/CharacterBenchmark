@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from run_eval import build_summary, evaluate, load_json
+from card_import import import_card_bytes
 from validate_config import validate_character, validate_tests
 
 ROOT = Path(__file__).resolve().parent
@@ -126,17 +127,32 @@ class Handler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self) -> None:
-        if self.path != "/api/run":
+        if self.path not in {"/api/run", "/api/import-card"}:
             self.send_json(404, {"error": "Not found"})
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))
-            if length <= 0 or length > 100_000:
+            max_size = 28_000_000 if self.path == "/api/import-card" else 100_000
+            if length <= 0 or length > max_size:
                 raise ValueError("Invalid request size")
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
             if not isinstance(payload, dict):
                 raise ValueError("Request must be a JSON object")
-            result = run_payload(payload)
+            if self.path == "/api/import-card":
+                filename = str(payload.get("filename", "")).strip()
+                encoded = payload.get("data_base64")
+                if not filename or not isinstance(encoded, str):
+                    raise ValueError("Character card file is missing")
+                import base64
+                try:
+                    raw = base64.b64decode(encoded, validate=True)
+                except ValueError as exc:
+                    raise ValueError("Character card upload is not valid base64") from exc
+                if len(raw) > 20_000_000:
+                    raise ValueError("Character card is too large for this preview (20 MB max)")
+                result = import_card_bytes(filename, raw)
+            else:
+                result = run_payload(payload)
         except (ValueError, RuntimeError, json.JSONDecodeError) as exc:
             self.send_json(400, {"error": str(exc)})
             return

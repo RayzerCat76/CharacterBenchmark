@@ -57,9 +57,9 @@ Start the local browser UI with:
 python3 characterbench.py ui
 ```
 
-The UI binds to `127.0.0.1` only and adds no telemetry. It can run the bundled Aster/Tavi suites in offline-demo mode or against an installed Ollama model, and it can load your own CharacterBench `character.json` + `tests.json` files directly in the browser for a local Ollama run.
+The UI binds to `127.0.0.1` only and adds no telemetry. The fastest path is **Test my character → drop a standard Character Card JSON/PNG → choose an installed Ollama model → run**. CharacterBench extracts only fields already present in the card and generates a conservative starter regression suite. Standard Character Card v1/v2/v3-style JSON and PNG cards with embedded `chara`/`ccv3` metadata are supported; encrypted Risu-specific cards are not yet supported.
 
-This is an onboarding preview, not a hosted CharacterBench service: there is no account, cloud storage, or remote upload path.
+Advanced users can still load CharacterBench `character.json` + `tests.json` directly. This is an onboarding preview, not a hosted CharacterBench service: there is no account, cloud storage, or remote upload path.
 
 ## Compare multiple model profiles
 

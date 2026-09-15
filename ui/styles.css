@@ -91,3 +91,19 @@ footer{text-align:center;color:#5f7188;font-size:11px;margin-top:28px}
 .more-issues>summary::after{content:' ↓'}
 .more-issues[open]>summary::after{content:' ↑'}
 .more-issues-list{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+
+/* Character-card import */
+.drop-card{position:relative;display:grid;place-items:center;text-align:center;min-height:128px;margin-top:16px;padding:22px;border:1px dashed #38516f;border-radius:15px;background:#0b1523;cursor:pointer;transition:.16s ease}
+.drop-card:hover,.drop-card.dragging{border-color:var(--blue);background:rgba(122,168,239,.06)}
+.drop-card.ready{border-color:var(--green);background:rgba(115,214,160,.05)}
+.drop-card.loading-card{opacity:.7;pointer-events:none}
+.drop-card input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#17263a;color:var(--blue);font-weight:800;margin-bottom:8px}
+.drop-card strong{font-size:15px}.drop-card small{color:var(--muted);font-size:12px;margin-top:3px}
+.card-preview{margin-top:12px;border:1px solid #294536;border-radius:13px;padding:14px 15px;background:rgba(115,214,160,.05);display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:start}
+.card-preview strong,.card-preview span{display:block}.card-preview strong{color:var(--text)}.card-preview span{color:var(--green);font-size:12px;margin-top:2px}.card-preview .hint{grid-column:1/-1;margin-top:5px}
+.text-button{border:0;background:transparent;color:var(--blue);padding:2px 0;font-size:12px;font-weight:700}
+.advanced-import{margin-top:14px}.advanced-import>summary{cursor:pointer;color:var(--muted);font-size:12px;list-style:none}.advanced-import>summary::-webkit-details-marker{display:none}.advanced-import>summary::before{content:'+';display:inline-block;width:16px;color:var(--blue)}.advanced-import[open]>summary::before{content:'−'}
+.inline-error{color:#ffadb3!important}
+
+.count-badge.no-issues{background:rgba(115,214,160,.10);color:var(--green)}

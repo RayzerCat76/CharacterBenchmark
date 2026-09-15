@@ -34,7 +34,7 @@
             </button>
             <button class="choice" data-source="custom">
               <strong>Test my character</strong>
-              <span>Use your own CharacterBench JSON files.</span>
+              <span>Drop in a character card. CharacterBench prepares the tests.</span>
             </button>
           </div>
           <div id="bundled-fields" class="inline-options">
@@ -45,18 +45,26 @@
             <p id="suite-description" class="hint"></p>
           </div>
 
-          <div id="custom-fields" class="file-grid hidden">
-            <label class="file-card">
-              <span>Character profile</span>
-              <small>character.json</small>
-              <input id="character-file" type="file" accept="application/json,.json">
+          <div id="custom-fields" class="hidden">
+            <label id="card-drop" class="drop-card">
+              <span class="drop-icon">↓</span>
+              <strong>Drop a character card here</strong>
+              <small>PNG or JSON · SillyTavern / Risu-compatible cards</small>
+              <input id="card-file" type="file" accept="application/json,.json,image/png,.png">
             </label>
-            <label class="file-card">
-              <span>Test suite</span>
-              <small>tests.json</small>
-              <input id="tests-file" type="file" accept="application/json,.json">
-            </label>
-            <p class="hint full">Your files stay on this computer and are only sent to the local CharacterBench process.</p>
+            <div id="card-preview" class="card-preview hidden">
+              <div><strong id="card-name">Character ready</strong><span id="card-meta"></span></div>
+              <button id="clear-card" type="button" class="text-button">Change</button>
+              <p id="card-signals" class="hint"></p>
+            </div>
+            <p id="card-status" class="hint">The card stays on this computer. CharacterBench creates a starter regression suite from its existing fields.</p>
+            <details class="advanced-import">
+              <summary>Advanced: use CharacterBench JSON files</summary>
+              <div class="file-grid">
+                <label class="file-card"><span>Character profile</span><small>character.json</small><input id="character-file" type="file" accept="application/json,.json"></label>
+                <label class="file-card"><span>Test suite</span><small>tests.json</small><input id="tests-file" type="file" accept="application/json,.json"></label>
+              </div>
+            </details>
           </div>
         </div>
       </div>
