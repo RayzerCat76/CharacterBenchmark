@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
@@ -14,6 +15,14 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parent
+
+
+def open_provider_request(request: urllib.request.Request | str, timeout: float):
+    """Keep loopback model requests off macOS system proxies."""
+    url = request.full_url if isinstance(request, urllib.request.Request) else request
+    if urllib.parse.urlsplit(url).hostname in {"127.0.0.1", "localhost", "::1"}:
+        return urllib.request.build_opener(urllib.request.ProxyHandler({})).open(request, timeout=timeout)
+    return urllib.request.urlopen(request, timeout=timeout)
 
 
 @dataclass
@@ -84,14 +93,14 @@ def chat_completion(
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=request_timeout) as response:
+        with open_provider_request(request, timeout=request_timeout) as response:
             data = json.loads(response.read().decode("utf-8"))
     except TimeoutError as exc:
         raise RuntimeError(f"Provider request timed out for model {model}") from exc
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
         raise RuntimeError(f"Provider returned HTTP {exc.code}: {detail}") from exc
-    except urllib.error.URLError as exc:
+    except OSError as exc:
         raise RuntimeError(f"Could not reach provider: {exc}") from exc
 
     return data["choices"][0]["message"]["content"].strip()
@@ -126,14 +135,14 @@ def ollama_native_chat(
         method="POST",
     )
     try:
-        with urllib.request.urlopen(request, timeout=request_timeout) as response:
+        with open_provider_request(request, timeout=request_timeout) as response:
             data = json.loads(response.read().decode("utf-8"))
     except TimeoutError as exc:
         raise RuntimeError(f"Ollama request timed out for model {model}") from exc
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
         raise RuntimeError(f"Ollama returned HTTP {exc.code}: {detail}") from exc
-    except urllib.error.URLError as exc:
+    except OSError as exc:
         raise RuntimeError(f"Could not reach Ollama: {exc}") from exc
     return data["message"]["content"].strip()
 

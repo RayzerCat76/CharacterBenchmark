@@ -4,14 +4,12 @@ from __future__ import annotations
 import argparse
 import json
 import threading
-import urllib.error
-import urllib.request
 import webbrowser
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
-from run_eval import build_summary, evaluate, load_json
+from run_eval import build_summary, evaluate, load_json, open_provider_request
 from card_import import import_card_bytes
 from validate_config import validate_character, validate_tests
 
@@ -38,9 +36,9 @@ SUITES = {
 
 def ollama_models(base_url: str = "http://127.0.0.1:11434", timeout: float = 2.0) -> list[str]:
     try:
-        with urllib.request.urlopen(base_url.rstrip("/") + "/api/tags", timeout=timeout) as response:
+        with open_provider_request(base_url.rstrip("/") + "/api/tags", timeout=timeout) as response:
             data = json.loads(response.read().decode("utf-8"))
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
+    except (OSError, json.JSONDecodeError):
         return []
     models: list[str] = []
     for item in data.get("models", []):
