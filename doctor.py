@@ -4,9 +4,9 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import urllib.error
-import urllib.request
 from pathlib import Path
+
+from run_eval import open_provider_request
 
 ROOT = Path(__file__).resolve().parent
 
@@ -18,9 +18,9 @@ def status(kind: str, message: str) -> None:
 def fetch_ollama(url: str, timeout: float) -> list[str] | None:
     endpoint = url.rstrip('/') + '/api/tags'
     try:
-        with urllib.request.urlopen(endpoint, timeout=timeout) as response:
+        with open_provider_request(endpoint, timeout=timeout) as response:
             data = json.loads(response.read().decode('utf-8'))
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
+    except (OSError, json.JSONDecodeError):
         return None
     models = []
     for item in data.get('models', []):
