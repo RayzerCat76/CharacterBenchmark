@@ -16,6 +16,13 @@ CharacterBench turns **“does this still feel like the character?”** into a r
 
 ![CharacterBench local UI](docs/ui-overview.png)
 
+### Portfolio navigation
+
+- [Build process and implementation decisions](docs/BUILD_PROCESS.md): public revision links, what changed, and what the alpha demonstrates.
+- [Five-minute reviewer path and contribution credits](PORTFOLIO.md).
+- Code entry points: [command-line workflow](characterbench.py), [card import](card_import.py), [evaluation](run_eval.py), [local UI server](ui_server.py), and [focused checks](tests/).
+- The validation issue records the **0.2.1-alpha** external-testing request. The current downloadable version is **0.2.2-alpha**.
+
 ### Why use it?
 
 - Re-run the same character tests after every model or prompt change.

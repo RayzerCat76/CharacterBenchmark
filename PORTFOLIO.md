@@ -14,6 +14,8 @@ The local UI and example screenshot are documented in the main [README](README.m
 
 I was changing character cards and models but could not reliably tell whether a character's behavior had improved or quietly regressed. The initial prototype used fixed, repeatable conversations to expose failures such as accepting false memories or inventing lore. The current alpha adds card import, starter checks, a local UI, saved baselines, test fingerprints, reports, and comparison. Fingerprints prevent changed tests from being presented as directly comparable runs.
 
+The [build-process map](docs/BUILD_PROCESS.md) links specific public revisions to those decisions and to the current code.
+
 ## Current stage
 
 The v0.2.2-alpha package and its local demo, UI/API workflows, Ollama runs, reports, and comparisons have been exercised. This establishes a working prototype, not broad external validation. I am still seeking real character-card cases that reveal false positives, missed failures, or confusing onboarding.
