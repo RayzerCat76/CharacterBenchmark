@@ -1,5 +1,7 @@
 # CharacterBench
 
+**MIT Maker Portfolio:** [project story, five-minute demonstration, current scope, and credits](PORTFOLIO.md).
+
 **Regression testing for character AI.**
 
 AI characters can slowly stop acting like themselves. They may accept memories that never happened, invent lore they should not know, forget relationships, drift into generic-assistant behaviour, or change after you swap a model, prompt, memory system, or character profile.
